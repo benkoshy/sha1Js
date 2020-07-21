@@ -21,3 +21,5 @@ Module.prototype.init = function({node}) {
 };
 
 var Sha1Module = new Module();
+
+module.exports = { Sha1Module }
