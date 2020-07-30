@@ -10,8 +10,12 @@
     <div id="sha1app"></div>
 
     <script>
+      function passShaToElm(data){
+        console.log(data);
+      }
       var app = Sha1Module.init({
-        node: document.getElementById('sha1app')
+        node: document.getElementById('sha1app'),
+        callback: passShaToElm
       });
     </script>
   </body>
