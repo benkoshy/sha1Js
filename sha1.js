@@ -67,7 +67,7 @@ function Module() {
         <div id="SHAfileDrag">or drop files here</div>
       </div>
 
-      <div id="SHAsubmitButton">
+      <div id="SHAsubmitButton" style="display: none;">
         <button type="submit">Upload Files</button>
       </div>
     </form>
@@ -93,7 +93,8 @@ function Module() {
     filedrag.style.display = "block";
 
     // remove submit button
-    submitbutton.style.display = "none";
+    // I have inlined the submit button so it does not display
+
 
   }
 
