@@ -100,11 +100,17 @@ function Module() {
   this.render = function() {
 
     // Link Stylesheet
+    
+    // please provide a separate stylesheet
+    // because rails is failing - it cannot find the sytlesheet requested.
+/*
     var link = document.createElement('link');  
     link.rel = 'stylesheet';  
     link.type = 'text/css'; 
     link.href = 'style.css';  
     document.getElementsByTagName('HEAD')[0].appendChild(link);
+
+*/
 
     // Render file input html and scripts
     // var textnode = document.createTextNode("Hello world: Joble's SHA app");
