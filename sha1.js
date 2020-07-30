@@ -39,7 +39,7 @@ function Module() {
 
   const ParseFile = (file) => {
     const data = {
-      'name': file.name,
+      'filename': file.name,
       'type': file.type || '',
       'size': file.size
     }
