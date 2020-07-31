@@ -17,3 +17,56 @@ python -m SimpleHTTPServer
 4. Select some more files in the second instance that you see.
 5. the files aren't being displayed in the second instance.
 
+
+### How am I instantiating:
+
+
+```js
+
+import { Elm } from '../Main'
+import {Sha1Module} from "../sha1Js/sha1"
+export {initialiseElm}
+
+document.addEventListener('turbolinks:load', () => {  
+  initialiseElm()
+})
+
+function initialiseElm(){ 
+    let outerElements =  document.getElementsByClassName("are-attachments-in-previous-messages");
+    let sha1Elements = document.getElementsByClassName("sha1app");        
+
+    for (var i = 0; i < outerElements.length; i++) {    	 
+      console.log(sha1Elements.length)
+
+      let node = outerElements[i]
+      let documents = JSON.parse(node.getAttribute('data-documents'))
+      let user = JSON.parse(node.getAttribute('data-user'))
+      let conversation = JSON.parse(node.getAttribute('data-conversation'))
+      let message = JSON.parse(node.getAttribute('data-message'))
+
+  /*
+      	let documents = [{"id":1,"message_id":5,"file_data":{"id":"projects/1/document/1/file/df84d002ed79eb01fdb01c1a66aec101.png","storage":"store","metadata":{"sha1":"4c931a551a9825df6fd5772383d9df66ba685e3c","size":21636,"filename":"Dass_results_final.png","mime_type":"image/png"}},"created_at":"2020-07-29T06:01:09.387Z","updated_at":"2020-07-29T06:01:09.585Z","file_sha1":"4c931a551a9825df6fd5772383d9df66ba685e3c","token":"VcBWxvHGWLZApomB3sPWfRri","file_size":21636,"project_id":"1"}]
+          let user = {"id":1,"email":"brian@queen.com","crypted_password":"$2a$10$cfmLz2Pv8Aa3nn9tjAC7auMobR48q75X1hgG0zjZ94WhWUl5K.rHm","salt":"hq3Hsc8P5L4j27szRakz","created_at":"2020-07-28T09:01:06.058Z","updated_at":"2020-07-28T09:01:06.058Z","first_name":"Brian","last_name":"May","organisation_id":1,"remember_me_token":null,"remember_me_token_expires_at":null,"reset_password_token":null,"reset_password_token_expires_at":null,"reset_password_email_sent_at":null,"access_count_to_reset_password_page":0,"invitations_count":20000,"site_admin":true,"activation_state":"pending","activation_token":"dX9CPcDnnf6fri3hxByr","activation_token_expires_at":null,"organisation_admin":true}        
+          let message = {"id":5,"subject":"test","body":"\u003cdiv\u003etest\u003c/div\u003e","user_id":1,"conversation_id":1,"created_at":"2020-07-29T06:01:09.356Z","updated_at":"2020-07-29T06:01:09.356Z","index_no":5}
+          let conversation = {"id":1,"subject":"I Married a Forbidden Wolves - 1","created_at":"2020-07-28T09:01:28.616Z","updated_at":"2020-07-29T08:00:03.628Z","project_id":1,"is_open":true,"correspondence_type":"rfi","token":"Zq8kTeuDxiG4N3oWyjGiJQuF","pdf_data":{"id":"conversation/1/pdf/e32ba146a5e664443d5cdb14e46903d7.pdf","storage":"store","metadata":{"size":8262,"filename":"Conversation: I Married a Forbidden Wolves - 1 as at July 29 2020 6:00 PM +1000.pdf","mime_type":"application/pdf"}},"index_no":1}       
+          */
+
+      let elmApp = Elm.Main.init({node: node, flags: {documents: documents, user: user, project_id: conversation.project_id, message: message}  })    
+
+      let sha1Node = sha1Elements[i]
+      sha1Node.classList.remove("sha1app");
+
+      let joblesApp = Sha1Module.init({
+            node: sha1Node,
+            callback: passShaToElm
+          })
+
+      function passShaToElm(json_payload){ 
+        elmApp.ports.fileReceiver.send(JSON.parse(json_payload))
+      }
+    }   
+}
+
+
+
+```
