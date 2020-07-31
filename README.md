@@ -1,33 +1,19 @@
 # sha1Js
 Module to calculate SHA1 on input files
 
-# Initialisation code:
+### Running a simple server
 
-```js
-import { Elm } from '../Main'
-import {Sha1Module} from "../sha1Js/sha1"
+[If you don't have one handy try installing here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server)
 
-document.addEventListener('turbolinks:load', () => {
-
-  let outerElements =  document.getElementsByClassName("are-attachments-in-previous-messages");
-  let sha1Elements = document.getElementsByClassName("sha1app");
-
-  for (var i = 0; i < outerElements.length; i++) {    
-    let node = outerElements[i];
-
-    let documents = JSON.parse(node.getAttribute('data-documents'));     
-    let user = JSON.parse(node.getAttribute('data-user'));     
-    let conversation = JSON.parse(node.getAttribute('data-conversation'));   
-    let message = JSON.parse(node.getAttribute('data-message'));  
-
-    Elm.Main.init({node: node, flags: {documents: documents, user: user, project_id: conversation.project_id, message: message}  })
-   
-    let sha1Node = sha1Elements[i];
-            // it's initialised here
-    var app = Sha1Module.init({
-          node: sha1Node
-        });
-  }
-})
-
+```terminal
+python -m SimpleHTTPServer
 ```
+
+# Reproducible Example
+
+1. Start up the server
+2. Go to index.html
+3. Select some files in the first plugin instance that you see.
+4. Select some more files in the second instance that you see.
+5. the files aren't being displayed in the second instance.
+

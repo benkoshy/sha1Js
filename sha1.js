@@ -38,7 +38,7 @@ function Module() {
   }
 
   const ParseFile = (file) => {
-    const data = {
+    var data = {
       'filename': file.name,
       'type': file.type || '',
       'size': file.size
@@ -110,7 +110,6 @@ function Module() {
     link.type = 'text/css'; 
     link.href = 'style.css';  
     document.getElementsByTagName('HEAD')[0].appendChild(link);
-
 */
 
     // Render file input html and scripts

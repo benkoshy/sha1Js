@@ -7,16 +7,24 @@
   </head>
   
   <body>
-    <div id="sha1app"></div>
-
+    <div class="sha1app"></div>
+    <div class="sha1app"></div>
+    <div class="sha1app"></div>
+    <div class="sha1app"></div>
+    <div class="sha1app"></div>
+<!-- I'm wanting to iterate the initialisation of the plugin. -->
     <script>
       function passShaToElm(data){
         console.log(data);
       }
-      var app = Sha1Module.init({
-        node: document.getElementById('sha1app'),
-        callback: passShaToElm
-      });
+
+      shaNodes = document.getElementsByClassName('sha1app');
+      for (var i = 0; i < shaNodes.length; i++) {
+        var app = Sha1Module.init({
+          node: shaNodes[i],
+          callback: passShaToElm
+        });        
+      }      
     </script>
   </body>
   </html>
