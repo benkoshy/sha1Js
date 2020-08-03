@@ -58,11 +58,10 @@ function Module() {
 
   var fileInputMarkup = `
     <div>
-    <form id="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">
-      <H3>SHA1 Module - File Upload</H3>
+    <form id="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">      
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
       <div>
-        <label for="SHAfileInput">Files to upload:</label>
+        <label for="SHAfileInput"> Select files to check if you need to download the above:</label>
         <input type="file" id="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
         <div id="SHAfileDrag">or drop files here</div>
       </div>
