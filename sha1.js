@@ -11,22 +11,22 @@ class sha1Calc {
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
       <div>
         <label for="SHAfileInput"> Select files to check if you need to download the above:</label>
-        <input type="file" id="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
-        <div id="SHAfileDrag">or drop files here</div>
+        <input type="file" id="SHAfileInput" class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
+        <div class="SHAfileDrag">or drop files here</div>
       </div>
 
-      <div id="SHAsubmitButton" style="display: none;">
+      <div class="SHAsubmitButton" style="display: none;">
         <button type="submit">Upload Files</button>
       </div>
     </form>
     <p>Files Added</p>
-    <div id="fileInfo">
+    <div class="fileInfo">
     </div>
     </div>
   `;
 
   SelectElem = function(id) {
-    return this.rootSelector.querySelector('#'+id)
+    return this.rootSelector.querySelector('.'+id)
   }
 
   Output(msgHtml) {
