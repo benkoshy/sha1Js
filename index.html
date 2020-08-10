@@ -8,24 +8,63 @@
   </head>
   
   <body>
-    <div class="sha1app"></div>
-    <div class="sha1app"></div>
-    <div class="sha1app"></div>
-    <div class="sha1app"></div>
-    <div class="sha1app"></div>
-<!-- I'm wanting to iterate the initialisation of the plugin. -->
+    <div class="sha1app">
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+    </div>
+    <div class="sha1app">
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+    </div>
+    <div class="sha1app">
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+    </div>
+    <div class="sha1app">
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+    </div>
+    <div class="sha1app">
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+      <p> when we drag and drop a file here - i want it to be picked up!</p>
+    </div>
+    <!-- I'm wanting to iterate the initialisation of the plugin. -->
     <script>
-      function passShaToElm(data){
-        console.log(data);
-      }
-
-      shaNodes = document.getElementsByClassName('sha1app');
-      for (var i = 0; i < shaNodes.length; i++) {
-        var app = Sha1Module.init({
-          node: shaNodes[i],
-          callback: passShaToElm
-        });        
-      }      
+    function passShaToElm(data){
+    console.log(data);
+    }
+    shaNodes = document.getElementsByClassName('sha1app');
+    for (var i = 0; i < shaNodes.length; i++) {
+    var app = Sha1Module.init({
+    node: shaNodes[i],
+    callback: passShaToElm
+    });
+    }
     </script>
   </body>
-  </html>
+</html>
