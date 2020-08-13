@@ -12,7 +12,7 @@ class sha1Calc {
       <div>
         <label for="SHAfileInput"> Select files to check if you need to download the above:</label>
         <input type="file" id="SHAfileInput" class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
-        <div class="SHAfileDrag">or drop files here</div>
+        
       </div>
 
       <div class="SHAsubmitButton" style="display: none;">
@@ -20,8 +20,7 @@ class sha1Calc {
       </div>
     </form>
     <p>Files Added</p>
-    <div class="fileInfo">
-    </div>
+    <div class="fileInfo">&nbsp;</div>
     </div>
   `;
 
@@ -44,7 +43,7 @@ class sha1Calc {
   FileDragHover(e) {
       e.stopPropagation();
       e.preventDefault();
-      e.target.className = (e.type == "dragover" ? "hover" : "");
+      // e.target.className = (e.type == "dragover" ? "hover" : "");
   }
 
   FileSelectHandler(e) {
@@ -83,7 +82,8 @@ class sha1Calc {
   InitDragDrop() {
   
     var fileselect = this.SelectElem("SHAfileInput"),
-      filedrag = this.SelectElem("SHAfileDrag"),
+      // filedrag = this.SelectElem("SHAfileDrag"),
+      filedrag = this.rootSelector,
       submitbutton = this.SelectElem("SHAsubmitButton");
 
     // file select
