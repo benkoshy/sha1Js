@@ -43,7 +43,8 @@ class sha1Calc {
   FileDragHover(e) {
       e.stopPropagation();
       e.preventDefault();
-      // e.target.className = (e.type == "dragover" ? "hover" : "");
+      this.rootSelector.className = (e.type == "dragover" ? "hover" : "");
+      // e.target.classList.toggle(e.type == "dragover" ? "hover" : "");
   }
 
   FileSelectHandler(e) {
