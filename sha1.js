@@ -3,15 +3,53 @@ class sha1Calc {
   constructor(node, callback) {
     this.rootSelector = node;
     this.portCallback = callback;
+
+    this.chunkSize = 64 * 1024 * 1024;
+    this.hasher = null;
   }
+
+  hashChunk(chunk) {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.onload = async(e) => {
+        const view = new Uint8Array(e.target.result);
+        this.hasher.update(view);
+        resolve();
+      };
+  
+      fileReader.readAsArrayBuffer(chunk);
+    });
+  }
+
+  readFile = async(file) => {
+    console.log('readFile')
+    if (this.hasher) {
+      this.hasher.init();
+    } else {
+      this.hasher = await hashwasm.createMD5();
+    }
+  
+    const chunkNumber = Math.floor(file.size / this.chunkSize);
+  
+    for (let i = 0; i <= chunkNumber; i++) {
+      const chunk = file.slice(
+        this.chunkSize * i,
+        Math.min(this.chunkSize * (i + 1), file.size)
+      );
+      await this.hashChunk(chunk);
+    }
+  
+    const hash = this.hasher.digest();
+    return Promise.resolve(hash);
+  };
 
   fileInputMarkup = `
     <div>
-    <form id="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">      
+    <form class="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">      
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
       <div>
-        <label for="SHAfileInput"> Select files to check if you need to download the above:</label>
-        <input type="file" id="SHAfileInput" class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
+        <label> Select files to check if you need to download the above:</label>
+        <input type="file"  class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
         
       </div>
 
@@ -30,7 +68,7 @@ class sha1Calc {
 
   Output(msgHtml) {
     var outputDiv = this.SelectElem("fileInfo");
-    outputDiv.innerHTML = msgHtml + outputDiv.innerHTML;
+    outputDiv.innerHTML =  outputDiv.innerHTML + msgHtml;
     
   }
 
@@ -43,11 +81,10 @@ class sha1Calc {
   FileDragHover(e) {
       e.stopPropagation();
       e.preventDefault();
-      this.rootSelector.className = (e.type == "dragover" ? "hover" : "");
-      // e.target.classList.toggle(e.type == "dragover" ? "hover" : "");
+      this.rootSelector.className = (e.type == "dragover" ? "hover" : "rootSelector");
   }
 
-  FileSelectHandler(e) {
+  async FileSelectHandler(e) {
 
     // cancel event and hover styling
     this.FileDragHover(e);
@@ -55,29 +92,43 @@ class sha1Calc {
     // fetch FileList object
     var files = e.target.files || e.dataTransfer.files;
     
-    // process all File objects
+    // process all File objects 
     for (var i = 0, f; f = files[i]; i++) {
-      this.ParseFile(f);
+      await this.ParseFile(f);
     }
   }
 
-  ParseFile(file) {
-    var data = {
+  async ParseFile(file) {
+    // resultElement.innerHTML = "Loading...";
+    const start = Date.now();
+    const hash = await this.readFile(file);
+    const end = Date.now();
+    const duration = end - start;
+    const fileSizeMB = file.size / 1024 / 1024;
+    const throughput = fileSizeMB / (duration / 1000);
+
+    var fileInfoHtml = `
+      <p>File name: <strong>${file.name}</strong> 
+      type: <strong> ${file.type || ''} </strong> 
+      size: <strong> ${file.size} </strong> bytes
+      duration: <strong> ${duration} </strong> ms
+      throughput: <strong> ${throughput.toFixed(2)} </strong> MB/s
+      SHA1: <strong> ${hash} </strong> </p>
+      `;
+    this.Output(fileInfoHtml);
+
+    
+    var finalData = {
       'filename': file.name,
       'type': file.type || '',
-      'size': file.size
-    }
-    // Callback parent with file data
-    if (typeof this.portCallback === "function") {
-      this.portCallback(JSON.stringify(data));
+      'size': file.size,
+      'sha1': hash,
     }
 
-    var outputHtml = `
-      <p>File name: <strong>${file.name}</strong> 
-      type: <strong> ${file.type} </strong> 
-      size: <strong> ${file.size} </strong> bytes</p>
-      `;
-    this.Output(outputHtml);
+    // Callback parent with file data
+    if (typeof this.portCallback === "function") {
+      this.portCallback(JSON.stringify(finalData));
+    }
   }
 
   InitDragDrop() {
@@ -114,6 +165,8 @@ class sha1Calc {
     // var textnode = document.createTextNode("Hello world: Joble's SHA app");
     var template = this.SetHtml(this.fileInputMarkup);
     this.rootSelector.appendChild(template);
+    this.rootSelector.classList.add('rootSelector')
+    
     if (window.File && window.FileList && window.FileReader) {
       this.InitDragDrop();
     }
