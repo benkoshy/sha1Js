@@ -25,43 +25,54 @@ class sha1Calc {
     </div>
   `;
 
-  selectElemByClass = function(id) {
-    return this.rootSelector.querySelector('.'+id)
+  selectElemByClass = function(className) {
+    return this.rootSelector.querySelector('.'+className)
   }
 
-  SelectElemById = function(id) {
+  selectElemById = function(id) {
     return this.rootSelector.querySelector('#'+id)
   }
 
-  Output(msgHtml) {
+  selectFlex = function(selector) {
+    return this.rootSelector.querySelector(selector)
+  }
+
+  output(msgHtml) {
     var outputDiv = this.selectElemByClass("fileInfo");
     outputDiv.innerHTML =  outputDiv.innerHTML + msgHtml;
     
   }
 
-  SetHtml(markup) {
+  setHtml(markup) {
     var div = document.createElement('div');
     div.innerHTML = markup.trim();
     return div.firstChild; 
   }
 
-  FileDragHover(e) {
+  fileDragHover(e) {
       e.stopPropagation();
       e.preventDefault();
       this.rootSelector.className = (e.type == "dragover" ? "hover" : "rootSelector");
   }
 
   handleWorkerEvent(e) {
-    console.log('handleWorkerEvent', e.data)
+    // Worker invoked event; can be used for intial tasks 
+    return;
   }
 
   handleWorkerResult(event) {
     var hashPlaceholder, result, progressBar;
     result = event.data;
 
-    hashPlaceholder = this.SelectElemById('sha1_file_hash_' + result.block.file_id);
+    if (result.type == 'progress') {
+      progressBar = this.selectFlex('#sha1_file_hash_' + result.file_id + ' .bar')
+      progressBar.style.width = result.progress + 'px';
+      return;
+    }
+
+    hashPlaceholder = this.selectElemById('sha1_file_hash_' + result.block.file_id);
     if (hashPlaceholder) {
-      hashPlaceholder.parentNode.innerHTML=result.hash;
+      hashPlaceholder.parentNode.innerHTML=result.hash + ' (' + result.duration + 's)';
     }
 
     delete result.block.file_id;
@@ -86,12 +97,12 @@ class sha1Calc {
     }
   }
 
-  FileSelectHandler(e) {
+  fileSelectHandler(e) {
     var workers, worker, output, block;
     output = [];
 
     // cancel event and hover styling
-    this.FileDragHover(e);
+    this.fileDragHover(e);
 
     // fetch FileList object
     var files = e.target.files || e.dataTransfer.files;
@@ -101,7 +112,7 @@ class sha1Calc {
       workers = [];
       output.push('<tr><td class=""><strong>', file.name, '</strong></td><td> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
 
-      output.push('<tr>', '<td>SHA-1</td><td> <div class="progress progress-striped active" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="bar" style="width: 0%;"></div></div></td></tr>');
+      output.push('<tr>', '<td>SHA-1</td><td> <div class="progress" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="progress-bar progress-bar-striped bar" style="width: 0%;"></div></div></td></tr>');
 
       worker = new Worker('calc.worker.sha1.js');
       worker.addEventListener('message', this.handleWorkerEvent('sha1_file_hash_' + this.file_id));
@@ -118,11 +129,11 @@ class sha1Calc {
       this.file_id += 1;
     }
 
-    this.Output('<table class="table table-striped table-hover">' + output.join('') + '</table>');
+    this.output('<table class="table table-striped table-hover">' + output.join('') + '</table>');
     
   }
 
-  InitDragDrop() {
+  initDragDrop() {
   
     var fileselect = this.selectElemByClass("SHAfileInput"),
     // filedrag = this.selectElemByClass("SHAfileDrag"),
@@ -130,12 +141,12 @@ class sha1Calc {
     submitbutton = this.selectElemByClass("SHAsubmitButton");
 
     // file select
-    fileselect.addEventListener("change", this.FileSelectHandler.bind(this), false);
+    fileselect.addEventListener("change", this.fileSelectHandler.bind(this), false);
 
     // file drop
-    filedrag.addEventListener("dragover", this.FileDragHover.bind(this), false);
-    filedrag.addEventListener("dragleave", this.FileDragHover.bind(this), false);
-    filedrag.addEventListener("drop", this.FileSelectHandler.bind(this), false);
+    filedrag.addEventListener("dragover", this.fileDragHover.bind(this), false);
+    filedrag.addEventListener("dragleave", this.fileDragHover.bind(this), false);
+    filedrag.addEventListener("drop", this.fileSelectHandler.bind(this), false);
     filedrag.style.display = "block";
   }
 
@@ -154,12 +165,12 @@ class sha1Calc {
 
     // Render file input html and scripts
     // var textnode = document.createTextNode("Hello world: Joble's SHA app");
-    var template = this.SetHtml(this.fileInputMarkup);
+    var template = this.setHtml(this.fileInputMarkup);
     this.rootSelector.appendChild(template);
     this.rootSelector.classList.add('rootSelector')
     
     if (window.File && window.FileList && window.FileReader) {
-      this.InitDragDrop();
+      this.initDragDrop();
     }
     else {
       console.error("Error: No File permissions");

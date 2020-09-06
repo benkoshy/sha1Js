@@ -31,6 +31,13 @@ const readFile = async(file, file_id) => {
       Math.min(chunkSize * (i + 1), file.size)
     );
     await hashChunk(chunk);
+
+    var output = {
+      type: 'progress',
+      file_id: file_id,
+      progress:  parseInt(100 * i / chunkNumber)
+    }
+    self.postMessage(output);
   }
 
   const hash = hasher.digest();
@@ -38,8 +45,7 @@ const readFile = async(file, file_id) => {
 };
 
 self.addEventListener('message', function (event) {
-
-  var output, block, file, file_id;
+  var output, block, file, file_id, start, end, duration, fileSizeMB, throughput;
   block = event.data.block;
   file = event.data.file;
   file_id = block.file_id;
@@ -49,9 +55,15 @@ self.addEventListener('message', function (event) {
       'block' : block
   };
 
+  start = Date.now();
   readFile(file, file_id)
     .then((sha_result) => {
+      end = Date.now();
+      duration = (end - start) / 1000;
+      fileSizeMB = file.size / 1024 / 1024;
+      throughput = fileSizeMB / (duration / 1000);
       output.hash = sha_result;
+      output.duration = duration.toFixed(2);
       self.postMessage(output);
     })
 
