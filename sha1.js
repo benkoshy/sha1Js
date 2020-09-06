@@ -3,45 +3,8 @@ class sha1Calc {
   constructor(node, callback) {
     this.rootSelector = node;
     this.portCallback = callback;
-
-    this.chunkSize = 64 * 1024 * 1024;
-    this.hasher = null;
+    this.file_id = 1;
   }
-
-  hashChunk(chunk) {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.onload = async(e) => {
-        const view = new Uint8Array(e.target.result);
-        this.hasher.update(view);
-        resolve();
-      };
-  
-      fileReader.readAsArrayBuffer(chunk);
-    });
-  }
-
-  readFile = async(file) => {
-    console.log('readFile')
-    if (this.hasher) {
-      this.hasher.init();
-    } else {
-      this.hasher = await hashwasm.createMD5();
-    }
-  
-    const chunkNumber = Math.floor(file.size / this.chunkSize);
-  
-    for (let i = 0; i <= chunkNumber; i++) {
-      const chunk = file.slice(
-        this.chunkSize * i,
-        Math.min(this.chunkSize * (i + 1), file.size)
-      );
-      await this.hashChunk(chunk);
-    }
-  
-    const hash = this.hasher.digest();
-    return Promise.resolve(hash);
-  };
 
   fileInputMarkup = `
     <div>
@@ -62,12 +25,16 @@ class sha1Calc {
     </div>
   `;
 
-  SelectElem = function(id) {
+  selectElemByClass = function(id) {
     return this.rootSelector.querySelector('.'+id)
   }
 
+  SelectElemById = function(id) {
+    return this.rootSelector.querySelector('#'+id)
+  }
+
   Output(msgHtml) {
-    var outputDiv = this.SelectElem("fileInfo");
+    var outputDiv = this.selectElemByClass("fileInfo");
     outputDiv.innerHTML =  outputDiv.innerHTML + msgHtml;
     
   }
@@ -84,7 +51,44 @@ class sha1Calc {
       this.rootSelector.className = (e.type == "dragover" ? "hover" : "rootSelector");
   }
 
-  async FileSelectHandler(e) {
+  handleWorkerEvent(e) {
+    console.log('handleWorkerEvent', e.data)
+  }
+
+  handleWorkerResult(event) {
+    var hashPlaceholder, result, progressBar;
+    result = event.data;
+
+    hashPlaceholder = this.SelectElemById('sha1_file_hash_' + result.block.file_id);
+    if (hashPlaceholder) {
+      hashPlaceholder.parentNode.innerHTML=result.hash;
+    }
+
+    delete result.block.file_id;
+    var passData = {
+      ...result.block,
+      'sha1': result.hash,
+    }
+    // Callback parent with file data
+    if (typeof this.portCallback === "function") {
+      this.portCallback(JSON.stringify(passData));
+    }
+
+  }
+
+  hashFile(file, workers, block) {
+    for( i = 0; i < workers.length; i += 1) {
+      workers[i].postMessage({
+        'block': block,
+        'file': file
+      });
+      workers[i].addEventListener('message', this.handleWorkerResult.bind(this));
+    }
+  }
+
+  FileSelectHandler(e) {
+    var workers, worker, output, block;
+    output = [];
 
     // cancel event and hover styling
     this.FileDragHover(e);
@@ -93,50 +97,37 @@ class sha1Calc {
     var files = e.target.files || e.dataTransfer.files;
     
     // process all File objects 
-    for (var i = 0, f; f = files[i]; i++) {
-      await this.ParseFile(f);
+    for (var i = 0, file; file = files[i]; i++) {
+      workers = [];
+      output.push('<tr><td class=""><strong>', file.name, '</strong></td><td> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
+
+      output.push('<tr>', '<td>SHA-1</td><td> <div class="progress progress-striped active" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="bar" style="width: 0%;"></div></div></td></tr>');
+
+      worker = new Worker('calc.worker.sha1.js');
+      worker.addEventListener('message', this.handleWorkerEvent('sha1_file_hash_' + this.file_id));
+      workers.push(worker);
+
+      block = {
+        'filename': file.name,
+        'type': file.type || 'n/a',
+        'size': file.size,
+        'file_id': this.file_id
+      }
+
+      this.hashFile(file, workers, block);
+      this.file_id += 1;
     }
-  }
 
-  async ParseFile(file) {
-    // resultElement.innerHTML = "Loading...";
-    const start = Date.now();
-    const hash = await this.readFile(file);
-    const end = Date.now();
-    const duration = end - start;
-    const fileSizeMB = file.size / 1024 / 1024;
-    const throughput = fileSizeMB / (duration / 1000);
-
-    var fileInfoHtml = `
-      <p>File name: <strong>${file.name}</strong> 
-      type: <strong> ${file.type || ''} </strong> 
-      size: <strong> ${file.size} </strong> bytes
-      duration: <strong> ${duration} </strong> ms
-      throughput: <strong> ${throughput.toFixed(2)} </strong> MB/s
-      SHA1: <strong> ${hash} </strong> </p>
-      `;
-    this.Output(fileInfoHtml);
-
+    this.Output('<table class="table table-striped table-hover">' + output.join('') + '</table>');
     
-    var finalData = {
-      'filename': file.name,
-      'type': file.type || '',
-      'size': file.size,
-      'sha1': hash,
-    }
-
-    // Callback parent with file data
-    if (typeof this.portCallback === "function") {
-      this.portCallback(JSON.stringify(finalData));
-    }
   }
 
   InitDragDrop() {
   
-    var fileselect = this.SelectElem("SHAfileInput"),
-      // filedrag = this.SelectElem("SHAfileDrag"),
-      filedrag = this.rootSelector,
-      submitbutton = this.SelectElem("SHAsubmitButton");
+    var fileselect = this.selectElemByClass("SHAfileInput"),
+    // filedrag = this.selectElemByClass("SHAfileDrag"),
+    filedrag = this.rootSelector,
+    submitbutton = this.selectElemByClass("SHAsubmitButton");
 
     // file select
     fileselect.addEventListener("change", this.FileSelectHandler.bind(this), false);
