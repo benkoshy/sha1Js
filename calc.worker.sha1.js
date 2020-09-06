@@ -20,7 +20,7 @@ const readFile = async(file, file_id) => {
   if (hasher) {
     hasher.init();
   } else {
-    hasher = await hashwasm.createMD5();
+    hasher = await hashwasm.createSHA1();
   }
 
   const chunkNumber = Math.floor(file.size / chunkSize);
