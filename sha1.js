@@ -10,17 +10,13 @@ class sha1Calc {
     <div>
     <form class="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">      
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
-      <div>
-        <label> Select files to check if you need to download the above:</label>
-        <input type="file"  class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />
-        
+      <div>        
+        <input type="file"  class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />        
       </div>
-
       <div class="SHAsubmitButton" style="display: none;">
         <button type="submit">Upload Files</button>
       </div>
-    </form>
-    <p>Files Added</p>
+    </form>    
     <div class="fileInfo">&nbsp;</div>
     </div>
   `;
