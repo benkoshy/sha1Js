@@ -88,7 +88,7 @@ class sha1Calc {
   }
 
   hashFile(file, workers, block) {
-    for( i = 0; i < workers.length; i += 1) {
+    for(let i = 0; i < workers.length; i += 1) {
       workers[i].postMessage({
         'block': block,
         'file': file
@@ -187,4 +187,4 @@ function Module() {
 
 var Sha1Module = new Module();
 
-module.exports = { Sha1Module }
+export {Sha1Module as Sha1Module}
