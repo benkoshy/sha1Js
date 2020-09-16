@@ -1,4 +1,6 @@
-importScripts('https://cdn.jsdelivr.net/npm/hash-wasm');
+// we want to load everything using npm please
+// importScripts('https://cdn.jsdelivr.net/npm/hash-wasm');
+import { createSHA1 } from 'hash-wasm';
 
 const chunkSize = 64 * 1024 * 1024;
 const fileReader = new FileReader();
@@ -20,7 +22,7 @@ const readFile = async(file, file_id) => {
   if (hasher) {
     hasher.init();
   } else {
-    hasher = await hashwasm.createSHA1();
+    hasher = await createSHA1();
   }
 
   const chunkNumber = Math.floor(file.size / chunkSize);
@@ -44,7 +46,7 @@ const readFile = async(file, file_id) => {
   return Promise.resolve(hash);
 };
 
-self.addEventListener('message', function (event) {
+onmessage = function (event) {
   var output, block, file, file_id, start, end, duration, fileSizeMB, throughput;
   block = event.data.block;
   file = event.data.file;
@@ -66,5 +68,4 @@ self.addEventListener('message', function (event) {
       output.duration = duration.toFixed(2);
       self.postMessage(output);
     })
-
-}, false);
+}
