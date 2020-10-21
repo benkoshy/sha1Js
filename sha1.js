@@ -35,7 +35,11 @@ class sha1Calc {
 
   output(msgHtml) {
     var outputDiv = this.selectElemByClass("fileInfo");
-    outputDiv.innerHTML =  outputDiv.innerHTML + msgHtml;
+    if(outputDiv.firstChild != null){    
+      outputDiv.firstChild.insertAdjacentHTML("beforeBegin",msgHtml);
+    }else{
+      outputDiv.innerHTML =  outputDiv.innerHTML + msgHtml;
+    }
     
   }
 
