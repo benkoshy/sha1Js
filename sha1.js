@@ -17,7 +17,7 @@ class sha1Calc {
         <button type="submit">Upload Files</button>
       </div>
     </form>    
-    <div class="fileInfo">&nbsp;</div>
+    <div class="fileInfo" style="padding-top:10px"></div>
     </div>
   `;
 
@@ -68,7 +68,7 @@ class sha1Calc {
 
     hashPlaceholder = this.selectElemById('sha1_file_hash_' + result.block.file_id);
     if (hashPlaceholder) {
-      hashPlaceholder.parentNode.innerHTML=result.hash + ' (' + result.duration + 's)';
+      hashPlaceholder.parentNode.innerHTML='<div class="alert alert-success">'+result.hash + ' (' + result.duration + 's)</div>';
     }
 
     delete result.block.file_id;
@@ -106,7 +106,7 @@ class sha1Calc {
     // process all File objects 
     for (var i = 0, file; file = files[i]; i++) {
       workers = [];
-      output.push('<tr><td class=""><strong>', file.name, '</strong></td><td> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
+      output.push('<tr><td class="" style="width:20%"><strong>', file.name, '</strong></td><td style="width:80%"> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
 
       output.push('<tr>', '<td>SHA-1</td><td> <div class="progress" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="progress-bar progress-bar-striped bar" style="width: 2%;"></div></div></td></tr>');
 
