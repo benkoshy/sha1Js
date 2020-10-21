@@ -62,7 +62,12 @@ class sha1Calc {
 
     if (result.type == 'progress') {
       progressBar = this.selectFlex('#sha1_file_hash_' + result.file_id + ' .bar')
-      progressBar.style.width = result.progress + 'px';
+      console.log(result.progress);
+      if(result.progress>10){
+        progressBar.style.width = result.progress + 'px';
+      }else{
+        progressBar.style.width = '5px';
+      }  
       return;
     }
 
