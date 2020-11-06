@@ -15,7 +15,7 @@ class sha1Calc {
     <form class="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">      
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
       <div>        
-        <input type="file"  class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" />        
+        <input hidden type="file"  class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" /> 
       </div>
       <div class="SHAsubmitButton" style="display: none;">
         <button type="submit">Upload Files</button>
