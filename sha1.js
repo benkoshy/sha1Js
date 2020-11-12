@@ -15,7 +15,7 @@ class sha1Calc {
     <form class="SHAUploadForm" action="#" method="POST" enctype="multipart/form-data">      
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
       <div>        
-        <input hidden type="file"  class="SHAfileInput" name="SHAfileInput[]" multiple="multiple" /> 
+        <input class="SHAfileInput" style="display: none;" type="file" name="SHAfileInput[]" multiple="multiple" />        
       </div>
       <div class="SHAsubmitButton" style="display: none;">
         <button type="submit">Upload Files</button>
@@ -107,39 +107,63 @@ class sha1Calc {
   }
 
   fileSelectHandler(e) {
-    var workers, worker, output, block;
-    output = [];
+    var self = this;
+    
+    function traverseFileTree(item, path) {
+      path = path || "";
+      
+      if (item.isFile) {
+        // Get file
+        item.file(function(file) {
+          self.processFile(file);
+        });
+      } else if (item.isDirectory) {
+        // Get folder contents
+        var dirReader = item.createReader();
+        dirReader.readEntries(function(entries) {
+          for (var i=0; i<entries.length; i++) {
+            traverseFileTree(entries[i], path + item.name + "/");
+          }
+        });
+      }
+    }
+
+    var items = e.dataTransfer.items;
+
+    for (var i=0; i<items.length; i++) {
+      // webkitGetAsEntry is where the magic happens
+      var item = items[i].webkitGetAsEntry();
+      if (item) {
+        traverseFileTree(item);
+      }
+    }
 
     // cancel event and hover styling
     this.fileDragHover(e);
+  }
 
-    // fetch FileList object
-    var files = e.target.files || e.dataTransfer.files;
-    
-    // process all File objects 
-    for (var i = 0, file; file = files[i]; i++) {
-      workers = [];
-      output.push('<tr><td class="" style="width:20%"><strong>', file.name, '</strong></td><td style="width:80%"> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
+  processFile(file) {
+    var workers, worker, output, block;
+    output = [];
+    workers = [];
+    output.push('<tr><td class="" style="width:20%"><strong>', file.name, '</strong></td><td style="width:80%"> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
 
-      output.push('<tr>', '<td>SHA-1</td><td> <div class="progress" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="progress-bar progress-bar-striped bar" style="width: 2%;"></div></div></td></tr>');
+    output.push('<tr>', '<td>SHA-1</td><td> <div class="progress" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="progress-bar progress-bar-striped bar" style="width: 2%;"></div></div></td></tr>');
 
-      worker = new Worker();
-      worker.addEventListener('message', this.handleWorkerEvent('sha1_file_hash_' + this.file_id));
-      workers.push(worker);
+    worker = new Worker('sha1.worker.js');
+    worker.addEventListener('message', this.handleWorkerEvent('sha1_file_hash_' + this.file_id));
+    workers.push(worker);
 
-      block = {
-        'filename': file.name,
-        'type': file.type || 'n/a',
-        'size': file.size,
-        'file_id': this.file_id
-      }
-
-      this.hashFile(file, workers, block);
-      this.file_id += 1;
+    block = {
+      'filename': file.name,
+      'type': file.type || 'n/a',
+      'size': file.size,
+      'file_id': this.file_id
     }
 
+    this.hashFile(file, workers, block);
+    this.file_id += 1;
     this.output('<table class="table table-striped table-hover">' + output.join('') + '</table>');
-    
   }
 
   initDragDrop() {
