@@ -1,7 +1,7 @@
 // I need to load the worker file somehow
 // from webpacker. 
 // So I have removed the file reference you were previously using.
-// import Worker from './sha1.worker.js';
+import Worker from './sha1.worker.js';
 
 class sha1Calc {
   constructor(node, callback) {
@@ -140,7 +140,6 @@ class sha1Calc {
 
     // cancel event and hover styling
     this.fileDragHover(e);
-
   }
 
   processFile(file) {
@@ -221,5 +220,4 @@ function Module() {
 
 var Sha1Module = new Module();
 
-module.exports = { Sha1Module }
-// export {Sha1Module as Sha1Module}
+export {Sha1Module as Sha1Module}
