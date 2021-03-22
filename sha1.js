@@ -21,9 +21,18 @@ class sha1Calc {
         <button type="submit">Upload Files</button>
       </div>
     </form>    
-    <div class="fileInfo" style="padding-top:10px"></div>
-    </div>
+  <div data-controller="reveal" data-reveal-hidden-class="d-none">
+    <button data-action="click->reveal#toggle" type="button" class="btn btn-outline-primary">
+      Show File Fingerprints
+    </button>    
+    <div data-reveal-target="item" class="fileInfo d-none" style="padding-top:10px"></div>
+  </div>    
+  </div>
   `;
+
+  // the above data-controller etc. relies on a stimulus controller that shows and
+  // reveals the finger print information as required.
+  // this means that stimulus is now a hard dependency on this library
 
   selectElemByClass = function(className) {
     return this.rootSelector.querySelector('.'+className)
@@ -69,11 +78,12 @@ class sha1Calc {
     result = event.data;
 
     if (result.type == 'progress') {
-      progressBar = this.selectFlex('#sha1_file_hash_' + result.file_id + ' .bar')
-      console.log(result.progress);
+      progressBar = this.selectFlex('#sha1_file_hash_' + result.file_id + ' .bar')      
       if(result.progress>10){
         progressBar.style.width = result.progress + 'px';
-      }else{
+      }
+      else
+      {
         progressBar.style.width = '5px';
       }  
       return;

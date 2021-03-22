@@ -73,3 +73,7 @@ export default class extends Controller {
   }
 }
 ```
+
+### Stimulus Used to Show Hide Finger print information
+
+* We are using a stimulus controller to show and hide the file information table.
