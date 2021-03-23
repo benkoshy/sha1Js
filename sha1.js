@@ -158,7 +158,7 @@ class sha1Calc {
     workers = [];
     output.push('<tr><td class="" style="width:20%"><strong>', file.name, '</strong></td><td style="width:80%"> (', file.type || 'n/a', ') - ', (file.size  / 1024 / 1024).toFixed(2), ' MB</td></tr>');
 
-    output.push('<tr>', '<td>SHA-1</td><td> <div class="progress" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="progress-bar progress-bar-striped bar" style="width: 2%;"></div></div></td></tr>');
+    output.push('<tr>', '<td>SHA-1 (Fingerprint) </td><td> <div class="progress" style="margin-bottom: 0px" id="sha1_file_hash_', this.file_id, '"><div class="progress-bar progress-bar-striped bar" style="width: 2%;"></div></div></td></tr>');
 
     worker = new Worker('sha1.worker.js');
     worker.addEventListener('message', this.handleWorkerEvent('sha1_file_hash_' + this.file_id));
