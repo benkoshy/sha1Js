@@ -22,8 +22,8 @@ class sha1Calc {
       </div>
     </form>    
   <div data-controller="reveal" data-reveal-hidden-class="d-none">
-    <button data-action="click->reveal#toggle" type="button" class="btn btn-outline-primary">
-      Show File Fingerprints
+    <button data-action="click->reveal#toggle" type="button" class="btn btn-light">
+      ...
     </button>    
     <div data-reveal-target="item" class="fileInfo d-none" style="padding-top:10px"></div>
   </div>    
