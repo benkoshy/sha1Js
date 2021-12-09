@@ -38,7 +38,7 @@ You can see below how I will be instantiating your app, and functions that will 
           let conversation = {"id":1,"subject":"I Married a Forbidden Wolves - 1","created_at":"2020-07-28T09:01:28.616Z","updated_at":"2020-07-29T08:00:03.628Z","project_id":1,"is_open":true,"correspondence_type":"rfi","token":"Zq8kTeuDxiG4N3oWyjGiJQuF","pdf_data":{"id":"conversation/1/pdf/e32ba146a5e664443d5cdb14e46903d7.pdf","storage":"store","metadata":{"size":8262,"filename":"Conversation: I Married a Forbidden Wolves - 1 as at July 29 2020 6:00 PM +1000.pdf","mime_type":"application/pdf"}},"index_no":1}       
           */
 
-import { Controller } from "stimulus"
+import { Controller } from "@hotwired/stimulus"
 
 import { Elm } from '../Main'
 import {Sha1Module} from "../sha1Js/sha1"
