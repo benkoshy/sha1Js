@@ -1,7 +1,7 @@
 // I need to load the worker file somehow
 // from webpacker. 
 // So I have removed the file reference you were previously using.
-import Worker from './sha1.worker.js';
+//import {Worker} from './sha1.worker.js';
 
 class sha1Calc {
   constructor(node, callback) {
